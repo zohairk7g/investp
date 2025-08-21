@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>InvestPK — Withdrawal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0e17;
+  --secondary:#1f1f2e;
+  --accent:#162447;
+  --highlight:#fca311;
+  --text:#e0e0e0;
+  --btn-bg:#00cc88;
+  --shadow:rgba(0,255,100,0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh;}
+header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:15px 25px;background:var(--secondary);
+  position:fixed;top:0;left:0;width:100%;z-index:10;
+  box-shadow:0 4px 15px var(--shadow);
+  border-bottom:2px solid var(--highlight);
+}
+.menu-toggle{font-size:24px;cursor:pointer;background:var(--btn-bg);padding:8px 12px;border-radius:6px;color:#000;transition:all 0.3s ease;}
+.logo{font-size:26px;font-weight:600;color:var(--highlight);}
+.sidebar{
+  position:fixed;top:0;left:-260px;width:260px;height:100%;
+  background:var(--secondary);padding-top:60px;transition:left 0.3s;z-index:100;
+  box-shadow:2px 0 15px var(--shadow);
+}
+.sidebar.active{left:0;}
+.sidebar a{
+  display:block;padding:15px 25px;color:var(--text);text-decoration:none;
+  border-bottom:1px solid #1f3d1f;transition:background 0.2s;
+}
+.sidebar a:hover{background:var(--highlight);color:#000;}
+.main-content{padding:100px 20px;text-align:center;}
+
+.card{
+  max-width:900px;margin:20px auto;background:var(--secondary);
+  padding:20px;border-radius:12px;box-shadow:0 4px 15px var(--shadow);
+  text-align:left;
+}
+.card h2{color:var(--highlight);margin-bottom:10px;}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:12px;}
+.stat{
+  background:#131826;border:1px solid #22283a;border-radius:10px;padding:14px;
+}
+.stat .label{color:#b9b9b9;font-size:12px;text-transform:uppercase;letter-spacing:.06em;}
+.stat .value{font-size:20px;margin-top:6px;}
+
+.banner{
+  background:#2a1f10;border:1px solid #7a5107;color:#ffd9a0;
+  padding:14px;border-radius:10px;margin-top:14px;display:none;
+}
+
+.form-container{
+  max-width:600px;margin:30px auto;background:var(--secondary);
+  padding:30px;border-radius:12px;box-shadow:0 4px 15px var(--shadow);
+  text-align:left;
+}
+.form-container h3{color:var(--highlight);margin-bottom:16px;}
+.form-container label{display:block;text-align:left;margin:10px 0 5px;font-weight:600;}
+.form-container input, .form-container select{
+  width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:15px;font-size:16px;background:#1c2336;color:var(--text);
+}
+.btn{
+  background:var(--btn-bg);color:#000;padding:12px 18px;border:none;border-radius:10px;
+  cursor:pointer;font-size:16px;transition:transform 0.3s, background 0.3s;box-shadow:0 4px 12px var(--shadow);display:inline-block;
+}
+.btn:hover{background:var(--highlight);color:#000;transform:scale(1.04);box-shadow:0 0 15px var(--accent);}
+.btn.narrow{padding:10px 14px;font-size:14px}
+
+.history{
+  background:var(--secondary);padding:20px;border-radius:12px;margin:20px auto;
+  max-width:900px;text-align:left;box-shadow:0 4px 15px var(--shadow);
+}
+.history h3{color:var(--highlight);margin-bottom:10px;}
+table{width:100%;border-collapse:collapse;}
+th,td{padding:10px;border-bottom:1px solid #2a3147;text-align:left;}
+th{color:#ffd58a;font-weight:600;}
+.badge{display:inline-block;padding:4px 8px;border-radius:8px;font-size:12px;background:#24304d;color:#dfe7ff;}
+.badge.warn{background:#4d2f24;color:#ffd2b3;}
+.badge.ok{background:#193d2f;color:#bfffe1;}
+.hr{height:1px;background:#2a3147;border:0;margin:16px 0;}
+.small{font-size:13px;color:#bfbfbf}
+@media(max-width:760px){
+  .grid{grid-template-columns:1fr;}
+  .logo{font-size:22px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="menu-toggle" id="toggleBtn" onclick="toggleSidebar()">☰</div>
+  <div class="logo">InvestPK</div>
+</header>
+
+<div class="sidebar" id="sidebar">
+  <a href="index.html">Home</a>
+  <a href="deposit.html">Deposit</a>
+  <a href="withdraw.html">Withdrawal</a>
+  <a href="plans.html">Plans</a>
+  <a href="AddEarnings.html">Add Earnings</a>
+  <a href="referral.html">Referral</a>
+  <a href="customerSupport.html">Customer Support</a>
+  <a href="settings.html">Settings</a>
+  <a href="about.html">About</a>
+  <a href="Notifications.html">Notifications</a>
+</div>
+
+<div class="main-content">
+
+  <!-- Overview / Status -->
+  <div class="card">
+    <h2>Withdrawal Status</h2>
+    <div class="grid">
+      <div class="stat">
+        <div class="label">Current Plan</div>
+        <div class="value" id="planAmount">₨0</div>
+        <div class="small">Set from Plans page</div>
+      </div>
+      <div class="stat">
+        <div class="label">Stage</div>
+        <div class="value" id="stageLabel">—</div>
+        <div class="small" id="stageCapNote"></div>
+      </div>
+      <div class="stat">
+        <div class="label">Available Earnings</div>
+        <div class="value" id="availableEarnings">₨0</div>
+        <div class="small">Only withdrawable from active stage</div>
+      </div>
+      <div class="stat">
+        <div class="label">Total Withdrawn</div>
+        <div class="value" id="totalWithdrawn">₨0</div>
+        <div class="small" id="stageProgress">—</div>
+      </div>
+    </div>
+
+    <div id="lockBanner" class="banner">
+      <strong>Referral Required:</strong> Further withdrawals are paused. Please invite one user who deposits
+      an amount equal to or greater than your plan and buys the same or higher plan. After approval, your withdrawals resume for the next stage.
+    </div>
+  </div>
+
+  <!-- Withdraw Form -->
+  <div class="form-container">
+    <h3>Submit Withdrawal</h3>
+
+    <label for="wname">Name</label>
+    <input type="text" id="wname" placeholder="Your Name" required>
+
+    <label for="waccount">Account Number</label>
+    <input type="text" id="waccount" placeholder="JazzCash / EasyPaisa Number" required>
+
+    <label for="wmethod">Withdrawal Method</label>
+    <select id="wmethod" required>
+      <option value="">Select Method</option>
+      <option value="JazzCash">JazzCash</option>
+      <option value="EasyPaisa">EasyPaisa</option>
+    </select>
+
+    <label for="wamount">Amount (Min ₨200)</label>
+    <input type="number" id="wamount" placeholder="Enter Amount" min="200" required>
+
+    <button class="btn" id="btnSubmit">Submit Withdrawal</button>
+    <div class="small" style="margin-top:8px;">Processing time 0–6 hours after approval.</div>
+  </div>
+
+  <!-- History -->
+  <div class="history">
+    <h3>Withdrawal History</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Method</th>
+          <th>Account</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Stage</th>
+        </tr>
+      </thead>
+      <tbody id="historyBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+function toggleSidebar(){
+  const sidebar=document.getElementById('sidebar');
+  const toggleBtn=document.getElementById('toggleBtn');
+  sidebar.classList.toggle('active');
+  if(toggleBtn) toggleBtn.textContent=sidebar.classList.contains('active')?'✖':'☰';
+}
+document.addEventListener('click',function(e){
+  const sidebar=document.getElementById('sidebar');
+  const toggleBtn=document.getElementById('toggleBtn');
+  if(sidebar && toggleBtn && !sidebar.contains(e.target) && !toggleBtn.contains(e.target)){
+    sidebar.classList.remove('active');
+    toggleBtn.textContent='☰';
+  }
+});
+</script>
+
+<!-- Firebase (modular v10) -->
+<script type="module">
+  // ========== Firebase SDK imports ==========
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import {
+    getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, collection,
+    serverTimestamp, onSnapshot, query, where, orderBy, runTransaction
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // ========== CONFIG ==========
+  const firebaseConfig = {
+    // TODO: paste your firebaseConfig here
+    // apiKey: "...",
+    // authDomain: "...",
+    // projectId: "...",
+    // storageBucket: "...",
+    // messagingSenderId: "...",
+    // appId: "..."
+  };
+
+  // ========== INIT ==========
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // ========== DOM refs ==========
+  const planAmountEl = document.getElementById('planAmount');
+  const stageLabelEl = document.getElementById('stageLabel');
+  const stageCapNoteEl = document.getElementById('stageCapNote');
+  const availableEarningsEl = document.getElementById('availableEarnings');
+  const totalWithdrawnEl = document.getElementById('totalWithdrawn');
+  const stageProgressEl = document.getElementById('stageProgress');
+  const lockBanner = document.getElementById('lockBanner');
+  const historyBody = document.getElementById('historyBody');
+  const btnSubmit = document.getElementById('btnSubmit');
+
+  // ========== Stage helpers ==========
+  function stageInfo(plan, stage, withdrawnS1=0, withdrawnS2=0, withdrawnS3=0){
+    const s1Cap = plan * 0.70;
+    const s2Cap = plan * 0.60;
+    const s3Cap = plan * 0.30;
+    if(stage==='s1') return { label:'Stage 1 — 70%', cap:s1Cap, withdrawn:withdrawnS1 };
+    if(stage==='s2') return { label:'Stage 2 — next 60%', cap:s2Cap, withdrawn:withdrawnS2 };
+    if(stage==='s3') return { label:'Stage 3 — final 30%', cap:s3Cap, withdrawn:withdrawnS3 };
+    return { label:'Completed', cap:0, withdrawn:0 };
+  }
+
+  function isStageLocked(plan, stage, withdrawnS1, withdrawnS2, withdrawnS3){
+    const s = stageInfo(plan, stage, withdrawnS1, withdrawnS2, withdrawnS3);
+    if(stage==='s1' || stage==='s2' || stage==='s3'){
+      return s.withdrawn >= s.cap; // cap reached -> referral needed or done
+    }
+    return true; // done
+  }
+
+  // ========== UI Renderer ==========
+  function renderUI(userDoc, withdrawals){
+    if(!userDoc){ return; }
+    const {
+      planAmount=0, stage='s1', availableEarnings=0,
+      withdrawnS1=0, withdrawnS2=0, withdrawnS3=0
+    } = userDoc;
+
+    // Plan & stage
+    planAmountEl.textContent = '₨' + Number(planAmount||0).toFixed(2);
+    const s = stageInfo(planAmount, stage, withdrawnS1, withdrawnS2, withdrawnS3);
+    stageLabelEl.textContent = s.label;
+    if(stage==='done'){
+      stageCapNoteEl.textContent = 'All stages completed.';
+    } else {
+      stageCapNoteEl.textContent = 'Cap for this stage: ₨' + s.cap.toFixed(2) + ' (Withdrawn: ₨' + s.withdrawn.toFixed(2) + ')';
+    }
+
+    // Earnings
+    availableEarningsEl.textContent = '₨' + Number(availableEarnings||0).toFixed(2);
+    const totalWithdrawn = (withdrawnS1||0) + (withdrawnS2||0) + (withdrawnS3||0);
+    totalWithdrawnEl.textContent = '₨' + totalWithdrawn.toFixed(2);
+    stageProgressEl.textContent = (stage==='done')
+      ? 'Completed ✅'
+      : ('This stage remaining: ₨' + Math.max(0, s.cap - s.withdrawn).toFixed(2));
+
+    // Lock banner
+    const locked = isStageLocked(planAmount, stage, withdrawnS1, withdrawnS2, withdrawnS3);
+    lockBanner.style.display = (locked && stage!=='done') ? 'block' : 'none';
+
+    // History
+    historyBody.innerHTML = '';
+    if(!withdrawals || withdrawals.length===0){
+      historyBody.innerHTML = '<tr><td colspan="6" class="small">No withdrawals yet</td></tr>';
+    } else {
+      withdrawals.forEach(w=>{
+        const tr = document.createElement('tr');
+        const dt = w.createdAt?.toDate ? w.createdAt.toDate().toLocaleString() : (w.createdAt || '');
+        tr.innerHTML = `
+          <td>${dt}</td>
+          <td>${w.method||'-'}</td>
+          <td>${w.account||'-'}</td>
+          <td>₨${Number(w.amount||0).toFixed(2)}</td>
+          <td><span class="badge ${w.status==='Pending'?'warn':(w.status==='Approved'?'ok':'warn')}">${w.status||'-'}</span></td>
+          <td>${w.stageLabel||'-'}</td>
+        `;
+        historyBody.appendChild(tr);
+      });
+    }
+  }
+
+  // ========== Live wiring ==========
+  let authUnsub = null, wdrUnsub = null;
+  let currentUser = null;
+  let userDocData = null;
+
+  async function loadUserDoc(uid){
+    const ref = doc(db, 'users', uid);
+    const snap = await getDoc(ref);
+    if(!snap.exists()){
+      // minimal bootstrap (plan must be set via Plans page)
+      await setDoc(ref, {
+        planAmount: 0,
+        stage: 's1',
+        availableEarnings: 0,
+        withdrawnS1: 0,
+        withdrawnS2: 0,
+        withdrawnS3: 0,
+        createdAt: serverTimestamp()
+      }, { merge:true });
+      return (await getDoc(ref)).data();
+    }
+    return snap.data();
+  }
+
+  function listenWithdrawals(uid){
+    if(wdrUnsub) wdrUnsub();
+    const qy = query(
+      collection(db, 'withdrawals'),
+      where('uid','==',uid),
+      orderBy('createdAt','desc')
+    );
+    wdrUnsub = onSnapshot(qy, (snap)=>{
+      const list = [];
+      snap.forEach(d => list.push({ id:d.id, ...d.data() }));
+      renderUI(userDocData, list);
+    });
+  }
+
+  onAuthStateChanged(auth, async (user)=>{
+    if(!user){
+      // Redirect if not logged in
+      alert('Please login first.');
+      window.location.href = 'login.html';
+      return;
+    }
+    currentUser = user;
+    userDocData = await loadUserDoc(user.uid);
+    renderUI(userDocData, []); // initial paint
+    listenWithdrawals(user.uid);
+  });
+
+  // ========== Submit Withdrawal ==========
+  btnSubmit.addEventListener('click', async ()=>{
+    if(!currentUser){ alert('Please login first.'); return; }
+
+    // Fetch latest user doc before submit
+    const userRef = doc(db, 'users', currentUser.uid);
+    const snap = await getDoc(userRef);
+    if(!snap.exists()){ alert('User profile not found. Set your plan first.'); return; }
+    const data = snap.data();
+    const {
+      planAmount=0, stage='s1', availableEarnings=0,
+      withdrawnS1=0, withdrawnS2=0, withdrawnS3=0
+    } = data;
+
+    if(!planAmount || planAmount<=0){
+      alert('No plan set. Please buy/select a plan first.');
+      return;
+    }
+    if(stage==='done'){
+      alert('All stages completed. No more withdrawals.');
+      return;
+    }
+
+    // Inputs
+    const name = document.getElementById('wname').value.trim();
+    const account = document.getElementById('waccount').value.trim();
+    const method = document.getElementById('wmethod').value;
+    const amount = parseFloat(document.getElementById('wamount').value);
+
+    if(!name || !account || !method || isNaN(amount)){ alert('Please fill all fields.'); return; }
+    if(amount < 200){ alert('Minimum withdrawal is ₨200.'); return; }
+
+    // Stage lock & cap checks
+    const s = stageInfo(planAmount, stage, withdrawnS1, withdrawnS2, withdrawnS3);
+    const locked = isStageLocked(planAmount, stage, withdrawnS1, withdrawnS2, withdrawnS3);
+    if(locked){
+      alert('Referral required before further withdrawals.');
+      return;
+    }
+    const remainingCap = Math.max(0, s.cap - s.withdrawn);
+    if(amount > remainingCap){
+      alert('This amount exceeds your current stage limit. Try a smaller amount.');
+      return;
+    }
+    if(amount > (availableEarnings||0)){
+      alert('Insufficient available earnings.');
+      return;
+    }
+
+    // Transaction: create withdrawal + deduct earnings + increase withdrawn of current stage
+    try{
+      await runTransaction(db, async (tx)=>{
+        const fresh = await tx.get(userRef);
+        if(!fresh.exists()) throw new Error('User not found.');
+        const u = fresh.data();
+        const {
+          planAmount: p=0, stage: st='s1',
+          availableEarnings: ae=0,
+          withdrawnS1: w1=0, withdrawnS2: w2=0, withdrawnS3: w3=0
+        } = u;
+
+        if(p<=0) throw new Error('No plan set.');
+        if(st==='done') throw new Error('All stages completed.');
+
+        const si = stageInfo(p, st, w1, w2, w3);
+        const remCap = Math.max(0, si.cap - si.withdrawn);
+        if(amount > remCap) throw new Error('Stage cap exceeded.');
+        if(amount > ae) throw new Error('Insufficient available earnings.');
+
+        // 1) Create withdrawal request
+        const wRef = collection(db, 'withdrawals');
+        tx.set(addDoc(wRef, {})); // placeholder to get auto-id blocked? We'll create separately outside tx.
+      });
+
+      // NOTE: Firestore transactions cannot create with addDoc directly inside tx.
+      // We'll do it in two steps: (1) re-check caps; (2) batch-like update.
+
+      // Re-check and commit: safer approach
+      await runTransaction(db, async (tx)=>{
+        const fresh = await tx.get(userRef);
+        const u = fresh.data();
+        const {
+          planAmount: p=0, stage: st='s1',
+          availableEarnings: ae=0,
+          withdrawnS1: w1=0, withdrawnS2: w2=0, withdrawnS3: w3=0
+        } = u;
+
+        const si = stageInfo(p, st, w1, w2, w3);
+        const remCap = Math.max(0, si.cap - si.withdrawn);
+        if(amount > remCap) throw new Error('Stage cap exceeded.');
+        if(amount > ae) throw new Error('Insufficient available earnings.');
+
+        // Deduct & move withdrawn in current stage immediately (simple model).
+        const updates = {};
+        updates.availableEarnings = Number((ae - amount).toFixed(2));
+        if(st==='s1') updates.withdrawnS1 = Number((w1 + amount).toFixed(2));
+        if(st==='s2') updates.withdrawnS2 = Number((w2 + amount).toFixed(2));
+        if(st==='s3') updates.withdrawnS3 = Number((w3 + amount).toFixed(2));
+
+        tx.update(userRef, updates);
+      });
+
+      // Now create withdrawal doc (outside tx)
+      const stageLabel = stageInfo(planAmount, (snap.data().stage||'s1'), withdrawnS1, withdrawnS2, withdrawnS3).label;
+      await addDoc(collection(db,'withdrawals'), {
+        uid: currentUser.uid,
+        name, account, method,
+        amount: Number(amount),
+        status: 'Pending',
+        stage: (snap.data().stage||'s1'),
+        stageLabel,
+        createdAt: serverTimestamp()
+      });
+
+      // Optional: if cap reached, front-end banner guides referral
+      alert('Withdrawal submitted! Processing 0–6 hours.');
+
+      // Clear form
+      document.getElementById('wname').value='';
+      document.getElementById('waccount').value='';
+      document.getElementById('wmethod').value='';
+      document.getElementById('wamount').value='';
+
+      // Refresh userDoc in memory
+      const freshSnap = await getDoc(userRef);
+      userDocData = freshSnap.data();
+      // History will auto-refresh via onSnapshot
+      renderUI(userDocData, null);
+
+    }catch(err){
+      console.error(err);
+      alert(err.message || 'Failed to submit withdrawal.');
+    }
+  });
+</script>
+
+</body>
+</html>

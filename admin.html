@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>InvestPK — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0e17;
+  --secondary:#1f1f2e;
+  --accent:#162447;
+  --highlight:#fca311;
+  --text:#e0e0e0;
+  --btn-bg:#00cc88;
+  --shadow:rgba(0,255,100,0.12);
+  --card:#0f1720;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;color:var(--text);}
+body{background:var(--bg);min-height:100vh;}
+
+/* Layout */
+.header{
+  position:fixed;top:0;left:0;right:0;height:64px;background:var(--secondary);
+  display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:2px solid var(--highlight);
+  box-shadow:0 4px 15px var(--shadow);z-index:50;
+}
+.header .title{font-size:20px;color:var(--highlight);font-weight:600}
+.header .actions{display:flex;gap:12px;align-items:center}
+.header .admin-name{background:var(--accent);padding:8px 12px;border-radius:10px;color:#fff}
+
+/* Sidebar */
+.sidebar{
+  position:fixed;top:64px;left:0;width:260px;height:calc(100vh - 64px);
+  background:var(--secondary);padding-top:20px;border-right:1px solid rgba(255,255,255,0.02);
+  transition:transform .25s ease;overflow:auto;
+}
+.sidebar a{display:block;padding:12px 18px;color:var(--text);text-decoration:none;border-bottom:1px solid #15241a}
+.sidebar a.active, .sidebar a:hover{background:var(--highlight);color:#000}
+
+/* Content */
+.container{margin-left:260px;padding:90px 28px 40px 28px;max-width:1200px}
+.card-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-bottom:18px}
+.card{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.5);border-left:6px solid var(--btn-bg)}
+.card h3{color:var(--highlight);margin-bottom:8px}
+.card p{font-size:20px;font-weight:600;color:#fff}
+
+/* Table & modules */
+.module{background:var(--secondary);padding:18px;border-radius:12px;box-shadow:0 6px 18px var(--shadow);margin-bottom:18px}
+.module h2{color:var(--highlight);margin-bottom:12px}
+.table{width:100%;border-collapse:collapse;color:#ddd}
+.table th,.table td{padding:10px;border-bottom:1px solid #122024;text-align:left;font-size:14px}
+.table th{color:#ffd58a}
+.controls{display:flex;gap:8px;flex-wrap:wrap}
+.btn{background:var(--btn-bg);color:#000;padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:600}
+.btn.warn{background:var(--highlight);color:#000}
+.btn.danger{background:#e74c3c;color:#fff}
+.btn.small{padding:6px 8px;font-size:13px}
+
+/* Login overlay */
+.login-wrapper{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:100}
+.login-box{width:360px;background:var(--secondary);padding:22px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.6)}
+.login-box h2{color:var(--highlight);margin-bottom:12px}
+.input{width:100%;padding:10px;border-radius:8px;border:none;background:#10121a;color:#fff;margin-bottom:10px}
+
+/* responsive small screens */
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%);position:fixed;z-index:60}
+  .sidebar.open{transform:translateX(0)}
+  .container{margin-left:0;padding-top:120px}
+  .header .menu-toggle{display:block}
+}
+.small-muted{color:#9aa3a3;font-size:13px}
+.search-row{display:flex;gap:8px;margin-bottom:12px}
+.search-row input{flex:1;padding:8px;border-radius:8px;border:none;background:#0e1720;color:#fff}
+</style>
+</head>
+<body>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+
+<script>
+  // --- Firebase config ---
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_BUCKET",
+    messagingSenderId: "YOUR_MSG_SENDER",
+    appId: "YOUR_APP_ID"
+  };
+  const app = firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+</script>
+
+<!-- Header -->
+<div class="header">
+  <div style="display:flex;align-items:center;gap:16px">
+    <button class="btn small" onclick="toggleSidebarMobile()" style="display:none" id="mobileToggle">☰</button>
+    <div class="title">InvestPK — Admin Panel</div>
+    <div class="small-muted">Secure Admin Area</div>
+  </div>
+  <div class="actions">
+    <div class="admin-name" id="adminName">Admin</div>
+    <button class="btn small" onclick="logoutAdmin()">Logout</button>
+  </div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <a href="#" data-tab="dashboard" class="active" onclick="openTab('dashboard', this)">Dashboard</a>
+  <a href="#" data-tab="deposits" onclick="openTab('deposits', this)">Deposits</a>
+  <a href="#" data-tab="withdrawals" onclick="openTab('withdrawals', this)">Withdrawals</a>
+  <a href="#" data-tab="users" onclick="openTab('users', this)">Users</a>
+  <a href="#" data-tab="referrals" onclick="openTab('referrals', this)">Referrals</a>
+  <a href="#" data-tab="plans" onclick="openTab('plans', this)">Plans</a>
+  <a href="#" data-tab="tickets" onclick="openTab('tickets', this)">Support Tickets</a>
+</div>
+
+<!-- Content -->
+<div class="container">
+  <!-- Dashboard tab -->
+  <div id="dashboard" class="tab">
+    <div class="card-row">
+      <div class="card">
+        <h3>Total Users</h3>
+        <p id="statUsers">0</p>
+      </div>
+      <div class="card">
+        <h3>Deposits — Pending</h3>
+        <p id="statDepPending">0</p>
+      </div>
+      <div class="card">
+        <h3>Deposits — Approved</h3>
+        <p id="statDepApproved">0</p>
+      </div>
+      <div class="card">
+        <h3>Deposits — Rejected</h3>
+        <p id="statDepRejected">0</p>
+      </div>
+    </div>
+    <div class="card-row">
+      <div class="card">
+        <h3>Withdrawals — Pending</h3>
+        <p id="statWdrPending">0</p>
+      </div>
+      <div class="card">
+        <h3>Withdrawals — Approved</h3>
+        <p id="statWdrApproved">0</p>
+      </div>
+      <div class="card">
+        <h3>Withdrawals — Rejected</h3>
+        <p id="statWdrRejected">0</p>
+      </div>
+      <div class="card">
+        <h3>Open Tickets</h3>
+        <p id="statTickets">0</p>
+      </div>
+    </div>
+    <div class="module">
+      <h2>Recent Activity</h2>
+      <div id="recentList" class="small-muted">No recent activity yet.</div>
+    </div>
+  </div>
+
+  <!-- baki tabs (Deposits, Withdrawals, Users, Referrals, Plans, Tickets) -->
+  <!-- Yeh sab Firebase se data fetch aur update karenge -->
+</div>
+
+<!-- Admin Login overlay -->
+<div class="login-wrapper" id="loginOverlay">
+  <div class="login-box">
+    <h2>Admin Login</h2>
+    <input id="adminEmail" class="input" placeholder="Email" type="email">
+    <input id="adminPass" class="input" placeholder="Password" type="password">
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn" onclick="doAdminLogin()">Login</button>
+    </div>
+    <p class="small-muted" style="margin-top:10px">Use your admin credentials</p>
+  </div>
+</div>
+
+<script>
+// --- Admin Authentication ---
+function doAdminLogin(){
+  const email = document.getElementById('adminEmail').value.trim();
+  const pass = document.getElementById('adminPass').value.trim();
+  auth.signInWithEmailAndPassword(email, pass)
+    .then(res=>{
+      document.getElementById('loginOverlay').style.display='none';
+      document.getElementById('adminName').innerText = email.split('@')[0];
+      loadDashboardData();
+    })
+    .catch(err=>alert(err.message));
+}
+
+function logoutAdmin(){
+  auth.signOut().then(()=>{
+    location.reload();
+  });
+}
+
+// --- Sidebar toggle mobile ---
+function toggleSidebarMobile(){
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// --- Tabs ---
+function openTab(tabId, el){
+  document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.tab').forEach(t=>t.style.display='none');
+  const t = document.getElementById(tabId);
+  if(t) t.style.display='block';
+}
+
+// --- Dashboard stats & recent ---
+function loadDashboardData(){
+  const usersCol = db.collection('users');
+  const depositsCol = db.collection('deposits');
+  const withdrawalsCol = db.collection('withdrawals');
+  const ticketsCol = db.collection('tickets');
+
+  usersCol.get().then(snapshot=>{
+    const users = snapshot.docs.map(d=>d.data());
+    document.getElementById('statUsers').innerText = users.length;
+  });
+  depositsCol.get().then(snapshot=>{
+    const deps = snapshot.docs.map(d=>d.data());
+    document.getElementById('statDepPending').innerText = deps.filter(d=>d.status==='Pending').length;
+    document.getElementById('statDepApproved').innerText = deps.filter(d=>d.status==='Approved').length;
+    document.getElementById('statDepRejected').innerText = deps.filter(d=>d.status==='Rejected').length;
+  });
+  withdrawalsCol.get().then(snapshot=>{
+    const wdrs = snapshot.docs.map(d=>d.data());
+    document.getElementById('statWdrPending').innerText = wdrs.filter(d=>d.status==='Pending').length;
+    document.getElementById('statWdrApproved').innerText = wdrs.filter(d=>d.status==='Approved').length;
+    document.getElementById('statWdrRejected').innerText = wdrs.filter(d=>d.status==='Rejected').length;
+  });
+  ticketsCol.get().then(snapshot=>{
+    const tcks = snapshot.docs.map(d=>d.data());
+    document.getElementById('statTickets').innerText = tcks.filter(t=>t.status==='Open').length;
+  });
+}
+
+// --- Auto check auth ---
+auth.onAuthStateChanged(user=>{
+  if(user){
+    document.getElementById('loginOverlay').style.display='none';
+    document.getElementById('adminName').innerText = user.email.split('@')[0];
+    loadDashboardData();
+  } else {
+    document.getElementById('loginOverlay').style.display='flex';
+  }
+});
+
+// --- On page load ---
+document.addEventListener('DOMContentLoaded',()=>{
+  if(window.innerWidth<900) document.getElementById('mobileToggle').style.display='inline-block';
+});
+</script>
+</body>
+</html>
+

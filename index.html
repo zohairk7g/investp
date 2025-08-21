@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InvestPK — Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0e17;
+  --secondary:#1f1f2e;
+  --accent:#162447;
+  --highlight:#fca311;
+  --text:#e0e0e0;
+  --btn-bg:#00cc88;
+  --shadow:rgba(0,255,100,0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh;}
+header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:15px 25px;background:var(--secondary);
+  position:fixed;top:0;left:0;width:100%;z-index:10;
+  box-shadow:0 4px 15px var(--shadow);
+  border-bottom:2px solid var(--highlight);
+}
+.menu-toggle{font-size:24px;cursor:pointer;background:var(--btn-bg);padding:8px 12px;border-radius:6px;color:#000;transition:all 0.3s ease;}
+.logo{font-size:26px;font-weight:600;color:var(--highlight);}
+.balance{font-size:16px;background:var(--accent);padding:8px 16px;border-radius:8px;color:#fff;box-shadow:0 0 12px var(--shadow);}
+.sidebar{
+  position:fixed;top:0;left:-260px;width:260px;height:100%;
+  background:var(--secondary);padding-top:60px;transition:left 0.3s;z-index:100;
+  box-shadow:2px 0 15px var(--shadow);
+}
+.sidebar.active{left:0;}
+.sidebar a{
+  display:block;padding:15px 25px;color:var(--text);text-decoration:none;
+  border-bottom:1px solid #1f3d1f;transition:background 0.2s;
+}
+.sidebar a:hover{background:var(--highlight);color:#000;}
+.main-content{padding:100px 20px;text-align:center;}
+.buttons{margin:30px 0;display:flex;flex-wrap:wrap;justify-content:center;gap:20px;}
+.btn{
+  background:var(--btn-bg);color:#000;padding:15px 25px;border:none;border-radius:10px;
+  cursor:pointer;font-size:16px;transition:transform 0.3s, background 0.3s;box-shadow:0 4px 12px var(--shadow);
+}
+.btn:hover{background:var(--highlight);color:#000;transform:scale(1.05);box-shadow:0 0 15px var(--accent);}
+.about{margin-top:40px;font-size:16px;max-width:600px;margin-left:auto;margin-right:auto;line-height:1.6;color:#bbbbbb;}
+.alert{
+  background:#fca311;color:#000;padding:18px;border-radius:12px;margin-bottom:25px;
+  max-width:650px;margin:15px auto;box-shadow:0 4px 15px var(--shadow);display:none;
+}
+.history{
+  background:var(--secondary);padding:20px;border-radius:12px;margin:20px auto;
+  max-width:650px;text-align:left;box-shadow:0 4px 15px var(--shadow);
+}
+.history h2{color:var(--highlight);margin-bottom:10px;}
+.history p{color:#ccc;margin-bottom:5px;}
+@media(max-width:600px){
+  .buttons{flex-direction:column;align-items:center;}
+  .logo{font-size:22px;}
+  .balance{font-size:14px;padding:6px 12px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="menu-toggle" id="toggleBtn" onclick="toggleSidebar()">☰</div>
+  <div class="logo">InvestPK</div>
+  <div class="balance" id="balanceDisplay">₨0.00</div>
+</header>
+
+<div class="sidebar" id="sidebar">
+  <a href="deposit.html">Deposit</a>
+  <a href="withdraw.html">Withdrawal</a>
+  <a href="plans.html">Plans</a>
+  <a href="referral.html">Referral</a>
+  <a href="customerSupport.html">Customer Support</a>
+  <a href="settings.html">Settings</a>
+  <a href="about.html">About</a>
+  <a href="Notifications.html">Notifications</a>
+</div>
+
+<div class="main-content">
+  <div class="alert" id="earnAlert">You reached 70% earnings! Invite a user to resume withdrawal.</div>
+  <div class="buttons">
+    <button class="btn" onclick="window.location.href='deposit.html'">Deposit</button>
+    <button class="btn" onclick="window.location.href='withdraw.html'">Withdrawal</button>
+    <button class="btn" onclick="window.location.href='AddEarnings.html'">Add Earnings</button>
+    <button class="btn" onclick="showDepositHistory()">Deposit History</button>
+    <button class="btn" onclick="showWithdrawHistory()">Withdrawal History</button>
+  </div>
+
+  <div class="history" id="historySection">
+    <h2>History</h2>
+    <p>Deposit History: <span id="depositHistory">No records yet</span></p>
+    <p>Withdrawal History: <span id="withdrawHistory">No records yet</span></p>
+  </div>
+
+  <div class="about">
+    Welcome to <strong>InvestPK</strong> — Pakistan's trusted platform for daily earnings, buying plans, and earning via referrals. Your financial growth journey starts here 💚
+  </div>
+</div>
+
+<script>
+// Sidebar toggle
+function toggleSidebar(){
+  const sidebar=document.getElementById('sidebar');
+  const toggleBtn=document.getElementById('toggleBtn');
+  sidebar.classList.toggle('active');
+  toggleBtn.textContent=sidebar.classList.contains('active')?'✖':'☰';
+}
+document.addEventListener('click',function(e){
+  const sidebar=document.getElementById('sidebar');
+  const toggleBtn=document.getElementById('toggleBtn');
+  if(!sidebar.contains(e.target) && !toggleBtn.contains(e.target)){
+    sidebar.classList.remove('active');
+    toggleBtn.textContent='☰';
+  }
+});
+
+// User data simulation
+let user={
+  name:"Zohair",
+  balance:1000,
+  dailyEarnPercent:15,
+  earnedToday:0,
+  depositHistory:[],
+  withdrawHistory:[]
+};
+
+const balanceDisplay=document.getElementById('balanceDisplay');
+function updateBalanceDisplay(){
+  balanceDisplay.textContent="₨"+(user.balance + user.earnedToday).toFixed(2);
+}
+
+// Manual earnings
+function manualEarning(){
+  if(user.earnedToday<user.balance*0.7){
+    user.earnedToday += user.balance*(user.dailyEarnPercent/100);
+    updateBalanceDisplay();
+    if(user.earnedToday >= user.balance*0.7){
+      document.getElementById('earnAlert').style.display='block';
+    }
+  } else {
+    alert("Cannot add more earnings. Invite a user to resume.");
+  }
+}
+
+// Deposit / Withdraw simulation
+function deposit(){
+  window.location.href='deposit.html';
+}
+function withdraw(){
+  window.location.href='withdraw.html';
+}
+
+// Show history
+function showDepositHistory(){
+  document.getElementById('depositHistory').textContent=user.depositHistory.length>0?user.depositHistory.join(", "):"No records yet";
+}
+function showWithdrawHistory(){
+  document.getElementById('withdrawHistory').textContent=user.withdrawHistory.length>0?user.withdrawHistory.join(", "):"No records yet";
+}
+
+// Invite simulation (resume earning)
+function inviteCompleted(){
+  user.earnedToday=0;
+  document.getElementById('earnAlert').style.display='none';
+  alert("Invite completed! Earnings resumed.");
+}
+// Demo invite after 30 sec
+setTimeout(inviteCompleted,30000);
+
+updateBalanceDisplay();
+</script>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAW-O8RLaw1GgZ7pQx4JkK4vsZS34k3Erw",
+    authDomain: "mywebsite-ce8da.firebaseapp.com",
+    projectId: "mywebsite-ce8da",
+    storageBucket: "mywebsite-ce8da.firebasestorage.app",
+    messagingSenderId: "143947757311",
+    appId: "1:143947757311:web:d6c05f0a7872316b303eca",
+    measurementId: "G-JD9ECEWR3N"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+</body>
+</html>

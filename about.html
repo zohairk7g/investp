@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InvestPK — About</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0e17;
+  --secondary:#1f1f2e;
+  --accent:#162447;
+  --highlight:#fca311;
+  --text:#e0e0e0;
+  --btn-bg:#00cc88;
+  --shadow:rgba(0,255,100,0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh;}
+header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:15px 25px;background:var(--secondary);
+  position:fixed;top:0;left:0;width:100%;z-index:10;
+  box-shadow:0 4px 15px var(--shadow);
+  border-bottom:2px solid var(--highlight);
+}
+.menu-toggle{font-size:24px;cursor:pointer;background:var(--btn-bg);padding:8px 12px;border-radius:6px;color:#000;transition:all 0.3s ease;}
+.logo{font-size:26px;font-weight:600;color:var(--highlight);}
+.sidebar{
+  position:fixed;top:0;left:-260px;width:260px;height:100%;
+  background:var(--secondary);padding-top:60px;transition:left 0.3s;z-index:100;
+  box-shadow:2px 0 15px var(--shadow);
+}
+.sidebar.active{left:0;}
+.sidebar a{
+  display:block;padding:15px 25px;color:var(--text);text-decoration:none;
+  border-bottom:1px solid #1f3d1f;transition:background 0.2s;
+}
+.sidebar a:hover{background:var(--highlight);color:#000;}
+.main-content{padding:100px 20px;max-width:850px;margin:auto;line-height:1.8;}
+h1{color:var(--highlight);margin-bottom:20px;font-size:32px;}
+.section{background:var(--secondary);padding:25px;border-radius:12px;box-shadow:0 4px 15px var(--shadow);margin-bottom:25px;}
+.section h2{color:var(--highlight);margin-bottom:12px;}
+.section p{color:#ccc;font-size:16px;}
+@media(max-width:600px){
+  .logo{font-size:22px;}
+  h1{font-size:26px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="menu-toggle" id="toggleBtn" onclick="toggleSidebar()">☰</div>
+  <div class="logo">InvestPK</div>
+</header>
+
+<div class="sidebar" id="sidebar">
+  <a href="index.html">Home</a>
+  <a href="deposit.html">Deposit</a>
+  <a href="withdraw.html">Withdrawal</a>
+  <a href="plans.html">Plans</a>
+  <a href="referral.html">Referral</a>
+  <a href="customerSupport.html">Customer Support</a>
+  <a href="settings.html">Settings</a>
+  <a href="about.html">About</a>
+  <a href="notifications.html">Notifications</a>
+</div>
+
+<div class="main-content">
+  <h1>About InvestPK</h1>
+
+  <div class="section">
+    <h2>Who We Are</h2>
+    <p>InvestPK is Pakistan’s leading digital investment platform designed to help people grow their money through simple daily earning plans, secure deposits, and a transparent withdrawal system.</p>
+  </div>
+
+  <div class="section">
+    <h2>Our Mission</h2>
+    <p>Our mission is to empower individuals to achieve financial independence by offering safe, easy-to-understand, and reliable investment opportunities. We believe everyone deserves a chance to grow financially, regardless of background.</p>
+  </div>
+
+  <div class="section">
+    <h2>How It Works</h2>
+    <p>Users can deposit money, buy plans starting from Rs.200, and earn up to 15% daily. Through our referral system, you can also invite friends and earn commissions while helping others join the journey of financial growth.</p>
+  </div>
+
+  <div class="section">
+    <h2>Why Choose Us</h2>
+    <p>✔️ Secure & transparent platform <br>
+       ✔️ Daily guaranteed earnings <br>
+       ✔️ Easy withdrawal process <br>
+       ✔️ Referral bonuses for extra income</p>
+  </div>
+</div>
+
+<script>
+function toggleSidebar(){
+  const sidebar=document.getElementById('sidebar');
+  const toggleBtn=document.getElementById('toggleBtn');
+  sidebar.classList.toggle('active');
+  toggleBtn.textContent=sidebar.classList.contains('active')?'✖':'☰';
+}
+document.addEventListener('click',function(e){
+  const sidebar=document.getElementById('sidebar');
+  const toggleBtn=document.getElementById('toggleBtn');
+  if(!sidebar.contains(e.target) && !toggleBtn.contains(e.target)){
+    sidebar.classList.remove('active');
+    toggleBtn.textContent='☰';
+  }
+});
+</script>
+
+</body>
+</html>

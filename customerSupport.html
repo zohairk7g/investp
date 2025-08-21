@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InvestPK — Customer Support</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0e17;
+  --secondary:#1f1f2e;
+  --accent:#162447;
+  --highlight:#fca311;
+  --text:#e0e0e0;
+  --btn-bg:#00cc88;
+  --shadow:rgba(0,255,100,0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh;}
+header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:15px 25px;background:var(--secondary);
+  position:fixed;top:0;left:0;width:100%;z-index:10;
+  box-shadow:0 4px 15px var(--shadow);
+  border-bottom:2px solid var(--highlight);
+}
+.menu-toggle{font-size:24px;cursor:pointer;background:var(--btn-bg);padding:8px 12px;border-radius:6px;color:#000;transition:all 0.3s ease;}
+.logo{font-size:26px;font-weight:600;color:var(--highlight);}
+.balance{font-size:16px;background:var(--accent);padding:8px 16px;border-radius:8px;color:#fff;box-shadow:0 0 12px var(--shadow);}
+.sidebar{
+  position:fixed;top:0;left:-260px;width:260px;height:100%;
+  background:var(--secondary);padding-top:60px;transition:left 0.3s;z-index:100;
+  box-shadow:2px 0 15px var(--shadow);
+}
+.sidebar.active{left:0;}
+.sidebar a{
+  display:block;padding:15px 25px;color:var(--text);text-decoration:none;
+  border-bottom:1px solid #1f3d1f;transition:background 0.2s;
+}
+.sidebar a:hover{background:var(--highlight);color:#000;}
+.main-content{padding:100px 20px;max-width:700px;margin:auto;}
+.form-box{
+  background:var(--secondary);padding:25px;border-radius:12px;
+  box-shadow:0 4px 15px var(--shadow);
+}
+.form-box h2{color:var(--highlight);margin-bottom:20px;text-align:center;}
+.form-group{margin-bottom:18px;text-align:left;}
+.form-group label{display:block;margin-bottom:6px;font-weight:600;}
+.form-group input,.form-group select,.form-group textarea{
+  width:100%;padding:12px;border-radius:8px;border:none;
+  background:#222;color:#fff;font-size:15px;
+}
+.form-group textarea{resize:none;min-height:120px;}
+.form-group input[type="file"]{background:none;padding:0;}
+.btn{
+  background:var(--btn-bg);color:#000;padding:12px 20px;border:none;
+  border-radius:8px;cursor:pointer;font-size:16px;width:100%;
+  transition:transform 0.3s, background 0.3s;box-shadow:0 4px 12px var(--shadow);
+}
+.btn:hover{background:var(--highlight);color:#000;transform:scale(1.05);}
+.success{
+  background:#00cc88;color:#000;padding:15px;border-radius:10px;
+  margin:15px 0;display:none;text-align:center;font-weight:600;
+}
+@media(max-width:600px){
+  .logo{font-size:22px;}
+  .balance{font-size:14px;padding:6px 12px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="menu-toggle" id="toggleBtn" onclick="toggleSidebar()">☰</div>
+  <div class="logo">InvestPK</div>
+  <div class="balance" id="balanceDisplay">₨1000.00</div>
+</header>
+
+<div class="sidebar" id="sidebar">
+  <a href="index.html">Home</a>
+  <a href="deposit.html">Deposit</a>
+  <a href="withdraw.html">Withdrawal</a>
+  <a href="plans.html">Plans</a>
+  <a href="referral.html">Referral</a>
+  <a href="customerSupport.html">Customer Support</a>
+  <a href="settings.html">Settings</a>
+  <a href="about.html">About</a>
+  <a href="Notifications.html">Notifications</a>
+</div>
+
+<div class="main-content">
+  <div class="form-box">
+    <h2>Contact Customer Support</h2>
+
+    <div id="successMsg" class="success">✅ Your request has been submitted successfully!</div>
+
+    <form id="supportForm">
+      <div class="form-group">
+        <label for="name">Full Name *</label>
+        <input type="text" id="name" required>
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone Number *</label>
+        <input type="tel" id="phone" required placeholder="+92XXXXXXXXXX">
+      </div>
+      <div class="form-group">
+        <label for="email">Gmail *</label>
+        <input type="email" id="email" required placeholder="example@gmail.com">
+      </div>
+      <div class="form-group">
+        <label for="issue">Select Issue *</label>
+        <select id="issue" required>
+          <option value="">-- Choose an Issue --</option>
+          <option>Deposit Issue</option>
+          <option>Withdrawal Issue</option>
+          <option>Account Block</option>
+          <option>Referral Bonus</option>
+          <option>Others</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="message">Message *</label>
+        <textarea id="message" required placeholder="Write your issue here..."></textarea>
+      </div>
+      <div class="form-group">
+        <label for="file">Attach Screenshot/Video (Optional)</label>
+        <input type="file" id="file" accept="image/*,video/*" multiple>
+      </div>
+      <button type="submit" class="btn">Submit Request</button>
+    </form>
+  </div>
+</div>
+
+<script>
+// Sidebar toggle
+function toggleSidebar(){
+  const sidebar=document.getElementById('sidebar');
+  const toggleBtn=document.getElementById('toggleBtn');
+  sidebar.classList.toggle('active');
+  toggleBtn.textContent=sidebar.classList.contains('active')?'✖':'☰';
+}
+document.addEventListener('click',function(e){
+  const sidebar=document.getElementById('sidebar');
+  const toggleBtn=document.getElementById('toggleBtn');
+  if(!sidebar.contains(e.target) && !toggleBtn.contains(e.target)){
+    sidebar.classList.remove('active');
+    toggleBtn.textContent='☰';
+  }
+});
+
+// Form Submit Simulation
+document.getElementById("supportForm").addEventListener("submit",function(e){
+  e.preventDefault();
+  document.getElementById("successMsg").style.display="block";
+  this.reset();
+  setTimeout(()=>{document.getElementById("successMsg").style.display="none";},5000);
+});
+</script>
+
+</body>
+</html>

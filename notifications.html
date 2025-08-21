@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InvestPK — Notifications</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0e17;
+  --secondary:#1f1f2e;
+  --accent:#162447;
+  --highlight:#fca311;
+  --text:#e0e0e0;
+  --btn-bg:#00cc88;
+  --shadow:rgba(0,255,100,0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh;}
+header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:15px 25px;background:var(--secondary);
+  position:fixed;top:0;left:0;width:100%;z-index:10;
+  box-shadow:0 4px 15px var(--shadow);
+  border-bottom:2px solid var(--highlight);
+}
+.menu-toggle{font-size:24px;cursor:pointer;background:var(--btn-bg);padding:8px 12px;border-radius:6px;color:#000;transition:all 0.3s ease;}
+.logo{font-size:26px;font-weight:600;color:var(--highlight);}
+.sidebar{
+  position:fixed;top:0;left:-260px;width:260px;height:100%;
+  background:var(--secondary);padding-top:60px;transition:left 0.3s;z-index:100;
+  box-shadow:2px 0 15px var(--shadow);
+}
+.sidebar.active{left:0;}
+.sidebar a{
+  display:block;padding:15px 25px;color:var(--text);text-decoration:none;
+  border-bottom:1px solid #1f3d1f;transition:background 0.2s;
+}
+.sidebar a:hover{background:var(--highlight);color:#000;}
+.main-content{padding:100px 20px;max-width:800px;margin:auto;}
+h2{color:var(--highlight);margin-bottom:20px;text-align:center;}
+.notification{
+  background:var(--secondary);padding:15px 20px;border-radius:12px;
+  margin-bottom:15px;box-shadow:0 4px 12px var(--shadow);
+  border-left:5px solid var(--btn-bg);
+}
+.notification p{font-size:15px;color:#ddd;}
+.notification small{display:block;margin-top:8px;font-size:12px;color:#999;}
+@media(max-width:600px){
+  .logo{font-size:22px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="menu-toggle" id="toggleBtn" onclick="toggleSidebar()">☰</div>
+  <div class="logo">InvestPK</div>
+</header>
+
+<div class="sidebar" id="sidebar">
+  <a href="index.html">Home</a>
+  <a href="deposit.html">Deposit</a>
+  <a href="withdraw.html">Withdrawal</a>
+  <a href="plans.html">Plans</a>
+  <a href="referral.html">Referral</a>
+  <a href="customerSupport.html">Customer Support</a>
+  <a href="settings.html">Settings</a>
+  <a href="about.html">About</a>
+  <a href="notifications.html">Notifications</a>
+</div>
+
+<div class="main-content">
+  <h2>🔔 Notifications</h2>
+
+  <div class="notification">
+    <p>✅ Deposit successful — Your funds have been added to your account.</p>
+    <small>2 minutes ago</small>
+  </div>
+
+  <div class="notification">
+    <p>⏳ Withdrawal request is pending — Please wait for admin approval.</p>
+    <small>10 minutes ago</small>
+  </div>
+
+  <div class="notification">
+    <p>💸 Withdrawal approved — Your payment has been sent successfully.</p>
+    <small>1 hour ago</small>
+  </div>
+
+  <div class="notification">
+    <p>🎁 Daily task completed — Today's 15% earnings have been added to your balance.</p>
+    <small>Today</small>
+  </div>
+
+  <div class="notification">
+    <p>📢 Admin Announcement — New investment plan launching soon!</p>
+    <small>Yesterday</small>
+  </div>
+
+  <div class="notification">
+    <p>👥 Referral joined — You earned 7% commission from your invite.</p>
+    <small>Yesterday</small>
+  </div>
+
+  <div class="notification">
+    <p>⚠️ Security Alert — Your session expired, please log in again.</p>
+    <small>2 days ago</small>
+  </div>
+</div>
+
+<script>
+function toggleSidebar(){
+  const sidebar=document.getElementById('sidebar');
+  const toggleBtn=document.getElementById('toggleBtn');
+  sidebar.classList.toggle('active');
+  toggleBtn.textContent=sidebar.classList.contains('active')?'✖':'☰';
+}
+document.addEventListener('click',function(e){
+  const sidebar=document.getElementById('sidebar');
+  const toggleBtn=document.getElementById('toggleBtn');
+  if(!sidebar.contains(e.target) && !toggleBtn.contains(e.target)){
+    sidebar.classList.remove('active');
+    toggleBtn.textContent='☰';
+  }
+});
+</script>
+
+</body>
+</html>

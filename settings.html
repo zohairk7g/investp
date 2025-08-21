@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InvestPK — Settings</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0e17;
+  --secondary:#1f1f2e;
+  --accent:#162447;
+  --highlight:#fca311;
+  --text:#e0e0e0;
+  --btn-bg:#00cc88;
+  --shadow:rgba(0,255,100,0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh;}
+header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:15px 25px;background:var(--secondary);
+  position:fixed;top:0;left:0;width:100%;z-index:10;
+  box-shadow:0 4px 15px var(--shadow);
+  border-bottom:2px solid var(--highlight);
+}
+.menu-toggle{font-size:24px;cursor:pointer;background:var(--btn-bg);padding:8px 12px;border-radius:6px;color:#000;transition:all 0.3s ease;}
+.logo{font-size:26px;font-weight:600;color:var(--highlight);}
+.balance{font-size:16px;background:var(--accent);padding:8px 16px;border-radius:8px;color:#fff;box-shadow:0 0 12px var(--shadow);}
+.sidebar{
+  position:fixed;top:0;left:-260px;width:260px;height:100%;
+  background:var(--secondary);padding-top:60px;transition:left 0.3s;z-index:100;
+  box-shadow:2px 0 15px var(--shadow);
+}
+.sidebar.active{left:0;}
+.sidebar a{
+  display:block;padding:15px 25px;color:var(--text);text-decoration:none;
+  border-bottom:1px solid #1f3d1f;transition:background 0.2s;
+}
+.sidebar a:hover{background:var(--highlight);color:#000;}
+.main-content{
+  padding:100px 20px;max-width:900px;margin:auto;
+}
+.section{
+  background:var(--secondary);padding:20px;border-radius:12px;
+  box-shadow:0 4px 15px var(--shadow);margin-bottom:20px;
+}
+.section h2{color:var(--highlight);margin-bottom:12px;}
+.grid{
+  display:grid;gap:15px;
+  grid-template-columns:repeat(2,minmax(200px,1fr));
+}
+.full{grid-column:1/-1;}
+.label{font-weight:600;margin-bottom:6px;display:block;}
+.input, .select, .textarea{
+  width:100%;padding:12px;border:none;border-radius:8px;background:#222;color:#fff;
+}
+.textarea{min-height:110px;resize:vertical;}
+.badge{
+  display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;margin-left:8px;
+}
+.badge.ok{background:#16c79a;color:#000;}
+.badge.warn{background:#fca311;color:#000;}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.avatar{
+  width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--highlight);
+  background:#222;
+}
+.switch{
+  position:relative;width:50px;height:28px;background:#333;border-radius:999px;cursor:pointer;display:inline-block;
+}
+.switch input{display:none;}
+.switch span{
+  position:absolute;top:3px;left:3px;width:22px;height:22px;background:#aaa;border-radius:50%;transition:all .25s;
+}
+.switch input:checked + span{
+  left:25px;background:#16c79a;
+}
+.btn{
+  background:var(--btn-bg);color:#000;padding:12px 20px;border:none;border-radius:10px;
+  cursor:pointer;font-size:16px;font-weight:600;box-shadow:0 4px 12px var(--shadow);
+  transition:transform .3s,background .3s;
+}
+.btn:hover{background:var(--highlight);transform:translateY(-1px);}
+.btn.outline{
+  background:transparent;border:2px solid var(--highlight);color:var(--text);
+}
+.danger{background:#e74c3c;color:#fff;}
+.helper{color:#bfbfbf;font-size:13px;margin-top:6px;}
+hr.sep{border:none;border-top:1px solid #333;margin:12px 0;}
+@media(max-width:800px){.grid{grid-template-columns:1fr;}}
+@media(max-width:600px){
+  .logo{font-size:22px;}
+  .balance{font-size:14px;padding:6px 12px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="menu-toggle" id="toggleBtn" onclick="toggleSidebar()">☰</div>
+  <div class="logo">InvestPK</div>
+  <div class="balance" id="balanceDisplay">₨1000.00</div>
+</header>
+
+<div class="sidebar" id="sidebar">
+  <a href="index.html">Home</a>
+  <a href="deposit.html">Deposit</a>
+  <a href="withdraw.html">Withdrawal</a>
+  <a href="plans.html">Plans</a>
+  <a href="referral.html">Referral</a>
+  <a href="customerSupport.html">Customer Support</a>
+  <a href="settings.html">Settings</a>
+  <a href="about.html">About</a>
+  <a href="Notifications.html">Notifications</a>
+</div>
+
+<div class="main-content">
+
+  <!-- BASIC INFO -->
+  <div class="section" id="basicInfoSec">
+    <h2>Basic Information</h2>
+    <div class="grid">
+      <div>
+        <label class="label">Username</label>
+        <input class="input" id="username" placeholder="username">
+      </div>
+      <div>
+        <label class="label">Full Name</label>
+        <input class="input" id="fullName" placeholder="Full Name">
+      </div>
+      <div>
+        <label class="label">Email
+          <span id="emailBadge" class="badge warn">Unverified</span>
+        </label>
+        <div class="row">
+          <input class="input" id="email" placeholder="example@gmail.com" style="flex:1">
+          <button class="btn" onclick="verify('email')">Verify</button>
+        </div>
+        <div class="helper">We’ll send a verification link (demo).</div>
+      </div>
+      <div>
+        <label class="label">Phone
+          <span id="phoneBadge" class="badge warn">Unverified</span>
+        </label>
+        <div class="row">
+          <input class="input" id="phone" placeholder="+92XXXXXXXXXX" style="flex:1">
+          <button class="btn" onclick="verify('phone')">Verify</button>
+        </div>
+        <div class="helper">We’ll send an OTP (demo).</div>
+      </div>
+      <div class="full">
+        <button class="btn" onclick="saveBasic()">Save Basic Info</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="section">
+    <h2>Profile</h2>
+    <div class="grid">
+      <div>
+        <label class="label">Profile Picture</label>
+        <div class="row">
+          <img id="avatarPreview" class="avatar" alt="">
+          <input type="file" id="avatar" accept="image/*" class="input" onchange="loadAvatar()">
+        </div>
+        <div class="helper">PNG/JPG recommended. Saved locally (demo).</div>
+      </div>
+      <div>
+        <label class="label">Gender</label>
+        <select class="select" id="gender">
+          <option value="">Select</option>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Prefer not to say</option>
+        </select>
+      </div>
+      <div>
+        <label class="label">Date of Birth</label>
+        <input type="date" class="input" id="dob">
+      </div>
+      <div class="full">
+        <button class="btn" onclick="saveProfile()">Save Profile</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECURITY -->
+  <div class="section">
+    <h2>Security</h2>
+    <div class="grid">
+      <div>
+        <label class="label">Old Password</label>
+        <input type="password" class="input" id="oldPass">
+      </div>
+      <div>
+        <label class="label">New Password</label>
+        <input type="password" class="input" id="newPass">
+      </div>
+      <div>
+        <label class="label">Confirm New Password</label>
+        <input type="password" class="input" id="confirmPass">
+      </div>
+      <div class="full">
+        <button class="btn" onclick="changePassword()">Change Password</button>
+        <div class="helper">Demo only (no server). Don’t use real passwords.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WALLET / WITHDRAWAL PREFS -->
+  <div class="section">
+    <h2>Withdrawal Preferences</h2>
+    <div class="grid">
+      <div>
+        <label class="label">Default Method</label>
+        <select class="select" id="wdMethod" onchange="toggleMethodFields()">
+          <option value="">Select</option>
+          <option value="JazzCash">JazzCash</option>
+          <option value="EasyPaisa">EasyPaisa</option>
+          <option value="Bank">Bank</option>
+        </select>
+      </div>
+      <div id="fieldNumber">
+        <label class="label">Account / Phone Number</label>
+        <input class="input" id="wdNumber" placeholder="03XXXXXXXXX">
+      </div>
+      <div id="fieldBank" style="display:none">
+        <label class="label">Bank Details</label>
+        <input class="input" id="bankTitle" placeholder="Account Title">
+        <hr class="sep">
+        <input class="input" id="bankName" placeholder="Bank Name">
+        <input class="input" id="bankIban" placeholder="IBAN / Account No">
+      </div>
+      <div class="full">
+        <button class="btn" onclick="saveWithdrawPrefs()">Save Withdrawal Preferences</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DISPLAY / NOTIFICATIONS -->
+  <div class="section">
+    <h2>Display & Notifications</h2>
+    <div class="grid">
+      <div class="row">
+        <label class="label">Hide Balance</label>
+        <label class="switch">
+          <input type="checkbox" id="hideBalance">
+          <span></span>
+        </label>
+      </div>
+      <div class="row">
+        <label class="label">Email Notifications</label>
+        <label class="switch">
+          <input type="checkbox" id="notifyEmail">
+          <span></span>
+        </label>
+      </div>
+      <div class="row">
+        <label class="label">SMS Notifications</label>
+        <label class="switch">
+          <input type="checkbox" id="notifySms">
+          <span></span>
+        </label>
+      </div>
+      <div class="row">
+        <label class="label">In-App Notifications</label>
+        <label class="switch">
+          <input type="checkbox" id="notifyInapp">
+          <span></span>
+        </label>
+      </div>
+      <div class="full">
+        <button class="btn" onclick="savePrefs()">Save Preferences</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRIVACY -->
+  <div class="section">
+    <h2>Privacy & Security</h2>
+    <div class="grid">
+      <div>
+        <div class="label">Last Login</div>
+        <div id="lastLogin" class="helper">—</div>
+      </div>
+      <div>
+        <button class="btn outline" onclick="logoutAll()">Logout from All Devices</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DANGER -->
+  <div class="section">
+    <h2>Danger Zone</h2>
+    <div class="grid">
+      <div>
+        <button class="btn danger" onclick="deactivate()">Deactivate Account</button>
+      </div>
+      <div>
+        <button class="btn danger" onclick="deleteAccount()">Delete Account</button>
+      </div>
+      <div class="full helper">These actions are simulated in demo (no server yet).</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Sidebar toggle
+function toggleSidebar(){
+  const sidebar=document.getElementById('sidebar');
+  const toggleBtn=document.getElementById('toggleBtn');
+  sidebar.classList.toggle('active');
+  toggleBtn.textContent=sidebar.classList.contains('active')?'✖':'☰';
+}
+document.addEventListener('click',function(e){
+  const sidebar=document.getElementById('sidebar');
+  const toggleBtn=document.getElementById('toggleBtn');
+  if(!sidebar.contains(e.target) && !toggleBtn.contains(e.target)){
+    sidebar.classList.remove('active');
+    toggleBtn.textContent='☰';
+  }
+});
+
+// ===== SETTINGS STORAGE (Local) =====
+const KEY = 'investpk_settings';
+const PASS = 'investpk_pass';
+const AVATAR = 'investpk_avatar';
+const LAST_LOGIN = 'investpk_lastlogin';
+
+// Seed demo last login
+if(!localStorage.getItem(LAST_LOGIN)){
+  localStorage.setItem(LAST_LOGIN, new Date().toString());
+}
+
+// Load
+function loadSettings(){
+  const s = JSON.parse(localStorage.getItem(KEY) || '{}');
+
+  // Basic
+  document.getElementById('username').value = s.username || '';
+  document.getElementById('fullName').value = s.fullName || '';
+  document.getElementById('email').value = s.email || '';
+  document.getElementById('phone').value = s.phone || '';
+  setBadge('emailBadge', s.emailVerified);
+  setBadge('phoneBadge', s.phoneVerified);
+
+  // Profile
+  document.getElementById('gender').value = s.gender || '';
+  document.getElementById('dob').value = s.dob || '';
+
+  // Withdraw
+  document.getElementById('wdMethod').value = s.wdMethod || '';
+  document.getElementById('wdNumber').value = s.wdNumber || '';
+  document.getElementById('bankTitle').value = s.bankTitle || '';
+  document.getElementById('bankName').value = s.bankName || '';
+  document.getElementById('bankIban').value = s.bankIban || '';
+  toggleMethodFields();
+
+  // Prefs
+  document.getElementById('hideBalance').checked = !!s.hideBalance;
+  document.getElementById('notifyEmail').checked = !!s.notifyEmail;
+  document.getElementById('notifySms').checked = !!s.notifySms;
+  document.getElementById('notifyInapp').checked = !!s.notifyInapp;
+
+  // Avatar
+  const img = localStorage.getItem(AVATAR);
+  const prev = document.getElementById('avatarPreview');
+  if(img){ prev.src = img; } else { prev.src=''; prev.alt='No Photo'; }
+
+  // Balance display honor "hideBalance"
+  applyBalanceVisibility();
+
+  // Last login
+  document.getElementById('lastLogin').innerText = localStorage.getItem(LAST_LOGIN) || '—';
+}
+
+function setBadge(id, verified){
+  const b = document.getElementById(id);
+  b.className = 'badge ' + (verified ? 'ok' : 'warn');
+  b.textContent = verified ? 'Verified' : 'Unverified';
+}
+
+function saveBasic(){
+  const s = JSON.parse(localStorage.getItem(KEY) || '{}');
+  s.username = document.getElementById('username').value.trim();
+  s.fullName = document.getElementById('fullName').value.trim();
+  s.email = document.getElementById('email').value.trim();
+  s.phone = document.getElementById('phone').value.trim();
+  localStorage.setItem(KEY, JSON.stringify(s));
+  alert('Basic info saved!');
+}
+
+function verify(kind){
+  const s = JSON.parse(localStorage.getItem(KEY) || '{}');
+  if(kind==='email'){
+    s.emailVerified = true;
+    setBadge('emailBadge', true);
+    alert('Email verification simulated!');
+  }else{
+    s.phoneVerified = true;
+    setBadge('phoneBadge', true);
+    alert('Phone verification simulated!');
+  }
+  localStorage.setItem(KEY, JSON.stringify(s));
+}
+
+function loadAvatar(){
+  const file = document.getElementById('avatar').files[0];
+  if(!file) return;
+  const rd = new FileReader();
+  rd.onload = e=>{
+    localStorage.setItem(AVATAR, e.target.result);
+    document.getElementById('avatarPreview').src = e.target.result;
+  };
+  rd.readAsDataURL(file);
+}
+
+function saveProfile(){
+  const s = JSON.parse(localStorage.getItem(KEY) || '{}');
+  s.gender = document.getElementById('gender').value;
+  s.dob = document.getElementById('dob').value;
+  localStorage.setItem(KEY, JSON.stringify(s));
+  alert('Profile saved!');
+}
+
+function changePassword(){
+  const oldP = document.getElementById('oldPass').value;
+  const n1 = document.getElementById('newPass').value;
+  const n2 = document.getElementById('confirmPass').value;
+
+  const saved = localStorage.getItem(PASS) || '';
+  if(saved && oldP !== saved){
+    alert('Old password is incorrect (demo).');
+    return;
+  }
+  if(n1.length < 6){ alert('New password must be at least 6 chars.'); return; }
+  if(n1 !== n2){ alert('New password & confirm mismatch.'); return; }
+
+  localStorage.setItem(PASS, n1);
+  document.getElementById('oldPass').value='';
+  document.getElementById('newPass').value='';
+  document.getElementById('confirmPass').value='';
+  alert('Password changed (demo).');
+}
+
+function toggleMethodFields(){
+  const m = document.getElementById('wdMethod').value;
+  document.getElementById('fieldNumber').style.display = (m==='JazzCash' || m==='EasyPaisa') ? 'block':'none';
+  document.getElementById('fieldBank').style.display = (m==='Bank') ? 'block':'none';
+}
+
+function saveWithdrawPrefs(){
+  const s = JSON.parse(localStorage.getItem(KEY) || '{}');
+  s.wdMethod = document.getElementById('wdMethod').value;
+  s.wdNumber = document.getElementById('wdNumber').value.trim();
+  s.bankTitle = document.getElementById('bankTitle').value.trim();
+  s.bankName = document.getElementById('bankName').value.trim();
+  s.bankIban = document.getElementById('bankIban').value.trim();
+  localStorage.setItem(KEY, JSON.stringify(s));
+  alert('Withdrawal preferences saved!');
+}
+
+function savePrefs(){
+  const s = JSON.parse(localStorage.getItem(KEY) || '{}');
+  s.hideBalance = document.getElementById('hideBalance').checked;
+  s.notifyEmail = document.getElementById('notifyEmail').checked;
+  s.notifySms = document.getElementById('notifySms').checked;
+  s.notifyInapp = document.getElementById('notifyInapp').checked;
+  localStorage.setItem(KEY, JSON.stringify(s));
+  applyBalanceVisibility();
+  alert('Preferences saved!');
+}
+
+function applyBalanceVisibility(){
+  const s = JSON.parse(localStorage.getItem(KEY) || '{}');
+  const bal = document.getElementById('balanceDisplay');
+  if(s.hideBalance){ bal.textContent = '₨••••••'; }
+  else{
+    // If you keep global balance in localStorage, fetch it; else demo value:
+    const storedBalance = parseFloat(localStorage.getItem('balance')||'1000').toFixed(2);
+    bal.textContent = '₨' + storedBalance;
+  }
+}
+
+// Privacy actions (demo)
+function logoutAll(){
+  alert('All sessions invalidated (demo).');
+}
+function deactivate(){
+  if(confirm('Deactivate your account? (demo)')){
+    alert('Account deactivated (demo).');
+  }
+}
+function deleteAccount(){
+  if(confirm('This will remove local data. Continue?')){
+    localStorage.removeItem(KEY);
+    localStorage.removeItem(PASS);
+    localStorage.removeItem(AVATAR);
+    alert('Local account data deleted (demo).');
+    location.href='logout.html';
+  }
+}
+
+loadSettings();
+</script>
+
+</body>
+</html>

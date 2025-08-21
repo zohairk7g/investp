@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InvestPK — Referral</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0e17;
+  --secondary:#1f1f2e;
+  --accent:#162447;
+  --highlight:#fca311;
+  --text:#e0e0e0;
+  --btn-bg:#00cc88;
+  --shadow:rgba(0,255,100,0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh;}
+header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:15px 25px;background:var(--secondary);
+  position:fixed;top:0;left:0;width:100%;z-index:10;
+  box-shadow:0 4px 15px var(--shadow);
+  border-bottom:2px solid var(--highlight);
+}
+.menu-toggle{font-size:24px;cursor:pointer;background:var(--btn-bg);padding:8px 12px;border-radius:6px;color:#000;transition:all 0.3s ease;}
+.logo{font-size:26px;font-weight:600;color:var(--highlight);}
+.balance{font-size:16px;background:var(--accent);padding:8px 16px;border-radius:8px;color:#fff;box-shadow:0 0 12px var(--shadow);}
+.sidebar{
+  position:fixed;top:0;left:-260px;width:260px;height:100%;
+  background:var(--secondary);padding-top:60px;transition:left 0.3s;z-index:100;
+  box-shadow:2px 0 15px var(--shadow);
+}
+.sidebar.active{left:0;}
+.sidebar a{
+  display:block;padding:15px 25px;color:var(--text);text-decoration:none;
+  border-bottom:1px solid #1f3d1f;transition:background 0.2s;
+}
+.sidebar a:hover{background:var(--highlight);color:#000;}
+.main-content{padding:100px 20px;text-align:center;}
+.invite-box{
+  background:var(--secondary);padding:20px;border-radius:12px;
+  box-shadow:0 4px 15px var(--shadow);margin-bottom:25px;
+}
+.invite-link{color:var(--highlight);font-weight:600;word-wrap:break-word;}
+.btn{
+  background:var(--btn-bg);color:#000;padding:10px 20px;border:none;
+  border-radius:8px;cursor:pointer;font-size:16px;margin-top:10px;
+  transition:transform 0.3s, background 0.3s;box-shadow:0 4px 12px var(--shadow);
+}
+.btn:hover{background:var(--highlight);color:#000;transform:scale(1.05);}
+.search-box input{
+  width:100%;padding:12px;border-radius:8px;border:none;margin:15px 0;
+}
+.table-box{
+  background:var(--secondary);padding:20px;border-radius:12px;
+  box-shadow:0 4px 15px var(--shadow);overflow-x:auto;
+}
+table{width:100%;border-collapse:collapse;}
+th,td{padding:12px;text-align:center;border-bottom:1px solid #333;}
+th{background:var(--highlight);color:#000;}
+@media(max-width:600px){
+  .logo{font-size:22px;}
+  .balance{font-size:14px;padding:6px 12px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="menu-toggle" id="toggleBtn" onclick="toggleSidebar()">☰</div>
+  <div class="logo">InvestPK</div>
+  <div class="balance" id="balanceDisplay">₨0.00</div>
+</header>
+
+<div class="sidebar" id="sidebar">
+  <a href="index.html">Home</a>
+  <a href="deposit.html">Deposit</a>
+  <a href="withdraw.html">Withdrawal</a>
+  <a href="plans.html">Plans</a>
+  <a href="referral.html">Referral</a>
+  <a href="customerSupport.html">Customer Support</a>
+  <a href="settings.html">Settings</a>
+  <a href="about.html">About</a>
+  <a href="Notifications.html">Notifications</a>
+</div>
+
+<div class="main-content">
+  <div class="invite-box">
+    <h2>Your Invite Link</h2>
+    <p class="invite-link" id="inviteLink"></p>
+    <button class="btn" onclick="copyLink()">Copy Link</button>
+  </div>
+
+  <div class="search-box">
+    <input type="text" id="searchBox" placeholder="Search by User ID..." onkeyup="searchInvitee()">
+  </div>
+
+  <div class="table-box">
+    <table id="inviteTable">
+      <thead>
+        <tr>
+          <th>User ID</th>
+          <th>Deposit</th>
+          <th>Referral Bonus</th>
+        </tr>
+      </thead>
+      <tbody id="inviteBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+// Sidebar toggle
+function toggleSidebar(){
+  const sidebar=document.getElementById('sidebar');
+  const toggleBtn=document.getElementById('toggleBtn');
+  sidebar.classList.toggle('active');
+  toggleBtn.textContent=sidebar.classList.contains('active')?'✖':'☰';
+}
+document.addEventListener('click',function(e){
+  const sidebar=document.getElementById('sidebar');
+  const toggleBtn=document.getElementById('toggleBtn');
+  if(!sidebar.contains(e.target) && !toggleBtn.contains(e.target)){
+    sidebar.classList.remove('active');
+    toggleBtn.textContent='☰';
+  }
+});
+
+// Dummy balance
+document.getElementById("balanceDisplay").textContent="₨1000.00";
+
+// Generate unique User ID
+let currentUserId=localStorage.getItem("userId");
+if(!currentUserId){
+  currentUserId=Math.floor(100000+Math.random()*900000).toString();
+  localStorage.setItem("userId",currentUserId);
+}
+
+// Show Invite Link
+document.getElementById("inviteLink").innerText=window.location.origin+"/signup.html?ref="+currentUserId;
+
+// Copy Invite Link
+function copyLink(){
+  navigator.clipboard.writeText(document.getElementById("inviteLink").innerText);
+  alert("Invite link copied!");
+}
+
+// Example Invitees
+if(!localStorage.getItem("invitees")){
+  let invitees=[
+    {id:"123456",deposit:1000,bonus:70},
+    {id:"234567",deposit:2000,bonus:140},
+    {id:"345678",deposit:0,bonus:0}
+  ];
+  localStorage.setItem("invitees",JSON.stringify(invitees));
+}
+
+// Load Invitees
+function loadInvitees(){
+  let invitees=JSON.parse(localStorage.getItem("invitees"))||[];
+  let tbody=document.getElementById("inviteBody");
+  tbody.innerHTML="";
+  invitees.forEach(inv=>{
+    let row=`<tr>
+      <td>${inv.id}</td>
+      <td>${inv.deposit>0?"₨"+inv.deposit:"Not Deposited"}</td>
+      <td>${inv.deposit>0?"₨"+inv.bonus:"-"}</td>
+    </tr>`;
+    tbody.innerHTML+=row;
+  });
+}
+
+// Search Invitee
+function searchInvitee(){
+  let filter=document.getElementById("searchBox").value.toUpperCase();
+  let tr=document.getElementById("inviteBody").getElementsByTagName("tr");
+  for(let i=0;i<tr.length;i++){
+    let td=tr[i].getElementsByTagName("td")[0];
+    if(td){
+      let txtValue=td.textContent||td.innerText;
+      tr[i].style.display=txtValue.toUpperCase().indexOf(filter)>-1?"":"none";
+    }
+  }
+}
+
+loadInvitees();
+</script>
+</body>
+</html>
